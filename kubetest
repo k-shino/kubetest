@@ -1,8 +1,84 @@
 #!/bin/bash
 
+
+#############################
+PROGNAME=$(basename $0)
+VERSION="v0.01"
+#############################
+TYPE=kind
+#############################
+
 dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
 
-echo $dir
 
-kustomize build ${dir}/kind/$1 | yq delete - metadata | kind create cluster --config -
+usage() {
+    echo "Deployment tool for various kubernetes version environment"
+    echo "Usage: $PROGNAME [OPTIONS] <kubernetes-version>"
+    echo ""
+    echo "<kubernetes-version>: Enter kubernetes version [v1.18.2, v1.17, v1.16, v1.15, v1.14, v1.13, v1.12, v1.11]"
+    echo ""
+    echo "Options:"
+    echo "  -t, --type : select platform [kind(default)]"
+    echo "  -h, --help"
+    echo "      --version"
+    echo ""
+    echo "Find more information at: https://github.com/k-shino/kubetest/blob/master/README.md"
+    exit 1
+}
+
+for OPT in "$@"
+do
+    case "$OPT" in
+        '-h'|'--help' )
+            usage
+            exit 1
+            ;;
+        '--version' )
+            echo $VERSION
+            exit 1
+            ;;
+        '-t'|'--type' )
+            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "$PROGNAME: option requires an argument -- $1" 1>&2
+                exit 1
+            fi
+            TYPE="$2"
+            shift 2
+            ;;
+        '--'|'-' )
+            shift 1
+            param+=( "$@" )
+            break
+            ;;
+        -*)
+            echo "$PROGNAME: illegal option -- '$(echo $1 | sed 's/^-*//')'" 1>&2
+            exit 1
+            ;;
+        *)
+            if [[ ! -z "$1" ]] && [[ ! "$1" =~ ^-+ ]]; then
+                #param=( ${param[@]} "$1" )
+                param+=( "$1" )
+                shift 1
+            fi
+            ;;
+    esac
+done
+
+
+if [ -z $param ]; then
+    echo "$PROGNAME: too few arguments" 1>&2
+    echo "Try '$PROGNAME --help' for more information." 1>&2
+    exit 1
+fi
+
+if [ "$TYPE" = "kind" ]; then
+    if [ ! -z ${dir}/kind/$param ]; then
+        echo "[ERROR] Unsupported kubernetes version is specified."
+        exit 1
+    fi
+    kustomize build ${dir}/kind/$param | yq delete - metadata | kind create cluster --config -
+else
+    echo "type error"
+    exit 1
+fi
 
