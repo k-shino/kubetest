@@ -1,4 +1,8 @@
 #!/bin/bash
 
-kustomize build ./kind/$1 | yq delete - metadata | kind create cluster --config -
+dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
+
+echo $dir
+
+kustomize build ${dir}/kind/$1 | yq delete - metadata | kind create cluster --config -
 
