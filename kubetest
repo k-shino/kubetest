@@ -1,0 +1,4 @@
+#!/bin/bash
+
+kustomize build ./kind/$1 | yq delete - metadata | kind create cluster --config -
+
