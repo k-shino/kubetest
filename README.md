@@ -8,7 +8,7 @@ Deployment tool for various kubernetes version environment
 - [yq version 3.2.1](https://github.com/mikefarah/yq/releases/tag/3.2.1)
 - [kustomize version v3.5.4](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv3.5.4)
 
-## How to build
+## How to use
 
 ```bash
 kubetest <kubernetes-version>
