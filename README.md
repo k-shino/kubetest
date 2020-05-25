@@ -27,7 +27,7 @@ supported kubernetes version: (which depends on kind v0.8.0 release)
 example:
 
 ```bash
-$ ./kubetest v1.18.2/
+$ ./kubetest v1.18.2
 Creating cluster "kind" ...
  ✓ Ensuring node image (kindest/node:v1.18.2) 🖼
  ✓ Preparing nodes 📦 📦 📦
