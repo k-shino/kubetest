@@ -18,7 +18,7 @@ usage() {
     echo "<kubernetes-version>: Enter kubernetes version [v1.18.2, v1.17, v1.16, v1.15, v1.14, v1.13, v1.12, v1.11]"
     echo ""
     echo "Options:"
-    echo "  -t, --provider : select platform [kind(default)]"
+    echo "  -p, --provider : select platform [kind(default)]"
     echo "  -h, --help"
     echo "      --version"
     echo ""
@@ -37,7 +37,7 @@ do
             echo $VERSION
             exit 1
             ;;
-        '-t'|'--provider' )
+        '-p'|'--provider' )
             if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
                 echo "$PROGNAME: option requires an argument -- $1" 1>&2
                 exit 1
