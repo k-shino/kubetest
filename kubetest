@@ -12,7 +12,7 @@ dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
 
 
 usage() {
-    echo "Deployment tool for various kubernetes version environment"
+    echo "Deployment tool for various versions of kubernetes environment"
     echo "Usage: $PROGNAME [OPTIONS] <kubernetes-version>"
     echo ""
     echo "<kubernetes-version>: Enter kubernetes version [v1.18.2, v1.17, v1.16, v1.15, v1.14, v1.13, v1.12, v1.11]"
