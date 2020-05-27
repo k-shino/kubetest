@@ -4,6 +4,7 @@ metadata:
     name: test
 nodes:
     - role: control-plane
+      image: kindest/node:v1.12.10@sha256:faeb82453af2f9373447bb63f50bae02b8020968e0889c7fa308e19b348916cb
     - role: worker
       image: kindest/node:v1.12.10@sha256:faeb82453af2f9373447bb63f50bae02b8020968e0889c7fa308e19b348916cb
     - role: worker
