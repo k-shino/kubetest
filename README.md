@@ -1,6 +1,6 @@
 # kubetest
 
-Deployment tool for various kubernetes version environment
+Deployment tool for various versions of kubernetes environment
 
 ## Requirements
 
