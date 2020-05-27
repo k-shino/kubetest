@@ -72,7 +72,7 @@ if [ -z $param ]; then
 fi
 
 if [ "$PROVIDER" = "kind" ]; then
-    if [ ! -z ${dir}/kind/$param ]; then
+    if [ ! -d ${dir}/kind/$param ]; then
         echo "[ERROR] Unsupported kubernetes version is specified."
         exit 1
     fi
