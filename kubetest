@@ -56,29 +56,44 @@ do
             ;;
         *)
             if [[ ! -z "$1" ]] && [[ ! "$1" =~ ^-+ ]]; then
-                #param=( ${param[@]} "$1" )
-                param+=( "$1" )
-                shift 1
+            param=( ${param[@]} "$1" )
+            shift 1
             fi
             ;;
     esac
 done
 
+echo "param: ${param[0]} ${param[1]}"
 
-if [ -z $param ]; then
+if [[ -z "${param[0]}" ]] || [[ -z "${param[1]}" ]] ; then
     echo "$PROGNAME: too few arguments" 1>&2
     echo "Try '$PROGNAME --help' for more information." 1>&2
     exit 1
 fi
 
-if [ "$PROVIDER" = "kind" ]; then
-    if [ ! -d ${dir}/kind/$param ]; then
-        echo "[ERROR] Unsupported kubernetes version is specified."
-        exit 1
-    fi
-    kustomize build ${dir}/kind/$param | yq delete - metadata | kind create cluster --config -
-else
-    echo "PROVIDER error"
-    exit 1
-fi
+CMD=${param[0]}
+PARAM=${param[1]}
 
+echo "CMD: $CMD"
+echo "PARAM: $PARAM"
+
+case "$CMD" in
+
+    'deploy' )
+
+        if [ "$PROVIDER" = "kind" ]; then
+            if [ ! -d ${dir}/kind/$PARAM ]; then
+                echo "[ERROR] Unsupported kubernetes version is specified."
+                exit 1
+            fi
+            kustomize build ${dir}/kind/$PARAM | yq delete - metadata | kind create cluster --config -
+        else
+            echo "PROVIDER error"
+            exit 1
+        fi
+        ;;
+    *)
+        echo "command error"
+        exit 1
+        ;;
+esac
