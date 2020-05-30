@@ -26,6 +26,19 @@ jobs:
     - name: Run a one-line script
       run: echo Hello, world!
 
+    - name: set up environment
+      run: |
+        apt update
+        apt -qy upgrade
+        wget https://github.com/kubernetes-sigs/kind/releases/download/v0.8.1/kind-linux-amd64 -O ~/bin/kind
+        wget https://github.com/mikefarah/yq/releases/download/3.2.1/yq_linux_amd64 -O ~/bin/yq
+        wget https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv3.5.4/kustomize_v3.5.4_linux_amd64.tar.gz
+        tar xvzf kustomize_v3.5.4_linux_amd64.tar.gz
+        mv kustomize ~/bin/
+        export PATH=${PATH}:~/bin
+        which yq
+        which kustomize
+        which kind
     # Runs a set of commands using the runners shell
     - name: Run a multi-line script
       run: |
