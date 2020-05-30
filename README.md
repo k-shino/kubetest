@@ -11,7 +11,7 @@ Deployment tool for various versions of kubernetes environment
 ## How to use
 
 ```bash
-kubetest <kubernetes-version>
+kubetest deploy <kubernetes-version>
 ```
 
 supported kubernetes version: (which depends on kind v0.8.0 release)
@@ -27,34 +27,43 @@ supported kubernetes version: (which depends on kind v0.8.0 release)
 example:
 
 ```bash
-$ ./kubetest v1.18.2
-Creating cluster "kind" ...
- ✓ Ensuring node image (kindest/node:v1.18.2) 🖼
- ✓ Preparing nodes 📦 📦 📦
- ✓ Writing configuration 📜
- ✓ Starting control-plane 🕹️
- ✓ Installing CNI 🔌
- ✓ Installing StorageClass 💾
- ✓ Joining worker nodes 🚜
-Set kubectl context to "kind-kind"
+$ kubetest deploy v1.16
+Creating cluster "kubetest" ...
+ ✓ Ensuring node image (kindest/node:v1.16.9) 🖼 
+ ✓ Preparing nodes 📦 📦 📦  
+ ✓ Writing configuration 📜 
+ ✓ Starting control-plane 🕹️ 
+ ✓ Installing CNI 🔌 
+ ✓ Installing StorageClass 💾 
+ ✓ Joining worker nodes 🚜 
+Set kubectl context to "kind-kubetest"
 You can now use your cluster with:
 
-kubectl cluster-info --context kind-kind
+kubectl cluster-info --context kind-kubetest
 
-Thanks for using kind! 😊
+Not sure what to do next? 😅  Check out https://kind.sigs.k8s.io/docs/user/quick-start/
 ```
 
-## get clusters
+## configure current context in kubectl
 
-```bash
-$ kind get clusters
-test
+```
+$ kubetest configure
+Kubernetes master is running at https://127.0.0.1:54104
+KubeDNS is running at https://127.0.0.1:54104/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+$
+$ kubectl get node
+NAME                     STATUS   ROLES    AGE     VERSION
+kubetest-control-plane   Ready    master   6m      v1.16.9
+kubetest-worker          Ready    <none>   5m23s   v1.16.9
+kubetest-worker2         Ready    <none>   5m23s   v1.16.9
 ```
 
 ## delete cluster
 
 ```bash
-$ kind delete cluster
-Deleting cluster "kind" ...
+$ kubetest delete
+Deleting cluster "kubetest" ...
 ```
 
