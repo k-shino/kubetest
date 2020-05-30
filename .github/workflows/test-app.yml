@@ -20,6 +20,7 @@ jobs:
     strategy:
       matrix:
         option: [' ','-v']
+        kubernetes: [v1.18.2,v1.11,v123]
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -70,7 +71,7 @@ jobs:
     - name: test kubetest deploy v1.15
       run: |
         export PATH=${PATH}:/home/runner/bin
-        ./kubetest deploy v1.15 ${{ matrix.option }}
+        ./kubetest deploy ${{ matrix.kubernetes }} ${{ matrix.option }}
         sleep 10
 
     - name: test kubetest configure
@@ -97,3 +98,70 @@ jobs:
         export PATH=${PATH}:/home/runner/bin
         ./kubetest delete ${{ matrix.option }}
 
+  test_kubetest_cluster_name:
+    name: test kubetest cluster name change
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name: [hoge]
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - name: set up environment
+      run: |
+        mkdir -p ~/bin
+        wget https://github.com/kubernetes-sigs/kind/releases/download/v0.8.1/kind-linux-amd64 -O ~/bin/kind
+        chmod +x ~/bin/kind
+        wget https://github.com/mikefarah/yq/releases/download/3.2.1/yq_linux_amd64 -O ~/bin/yq
+        chmod +x ~/bin/yq
+        wget https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv3.5.4/kustomize_v3.5.4_linux_amd64.tar.gz
+        tar xvzf kustomize_v3.5.4_linux_amd64.tar.gz
+        mv kustomize ~/bin/
+        curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+        mv kubectl ~/bin/
+        chmod +x ~/bin/kubectl
+        export PATH=${PATH}:/home/runner/bin
+        echo "check ~/bin"
+        ls ~/bin
+        echo "which yq"
+        which yq
+        echo "which kustomize"
+        which kustomize
+        echo "which kind"
+        which kind
+        echo "which kubectl"
+        which kubectl
+
+    - name: show environtment
+      run: |
+        export PATH=${PATH}:/home/runner/bin
+        echo "git branch:"
+        git branch
+        echo "current directory:"
+        pwd
+        echo "show files in current directory"
+        ls
+        echo "env:"
+        env
+
+    - name: test kubetest deploy v1.15
+      run: |
+        export PATH=${PATH}:/home/runner/bin
+        export KIND_CLUSTER_NAME=${{ matrix.name }}
+        ./kubetest deploy v1.15
+        sleep 10
+
+    - name: test kubetest configure
+      run: |
+        export PATH=${PATH}:/home/runner/bin
+        export KIND_CLUSTER_NAME=${{ matrix.name }}
+        ./kubetest configure
+
+    - name: test kubetest delete
+      run: |
+        export PATH=${PATH}:/home/runner/bin
+        export KIND_CLUSTER_NAME=${{ matrix.name }}
+        ./kubetest delete
