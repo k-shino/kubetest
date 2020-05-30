@@ -7,22 +7,32 @@ VERSION="v0.01"
 #############################
 PROVIDER=kind
 #############################
+KIND_CLUSTER_NAME=${KIND_CLUSTER_NAME:-kubetest}
+#############################
 
 dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
 
 
 usage() {
     echo "Deployment tool for various versions of kubernetes environment"
-    echo "Usage: $PROGNAME [OPTIONS] <kubernetes-version>"
     echo ""
-    echo "<kubernetes-version>: Enter kubernetes version [v1.18.2, v1.17, v1.16, v1.15, v1.14, v1.13, v1.12, v1.11]"
+    echo " Find more information at: https://github.com/k-shino/kubetest/blob/master/README.md"
+    echo ""
+    echo "Usage: $PROGNAME <command> [OPTIONS]"
+    echo ""
+    echo "Commands:"
+    echo ""
+    echo "  deploy <kubernetes-version>: deploy kubernetes cluster"
+    echo "    <kubernetes-version>: Enter kubernetes version [v1.18.2, v1.17, v1.16, v1.15, v1.14, v1.13, v1.12, v1.11]"
+    echo "  delete: delete kubernetes cluster"
+    echo "  configure: set current context to kubectl"
     echo ""
     echo "Options:"
     echo "  -p, --provider : select provider [kind(default)]"
+    echo "  -v, --verbose : verbose output"
     echo "  -h, --help"
     echo "      --version"
     echo ""
-    echo "Find more information at: https://github.com/k-shino/kubetest/blob/master/README.md"
     exit 1
 }
 
@@ -36,6 +46,10 @@ do
         '--version' )
             echo $VERSION
             exit 1
+            ;;
+        '-v'|'--verbose' )
+            DEBUG=true
+            shift 1
             ;;
         '-p'|'--provider' )
             if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
@@ -56,29 +70,75 @@ do
             ;;
         *)
             if [[ ! -z "$1" ]] && [[ ! "$1" =~ ^-+ ]]; then
-                #param=( ${param[@]} "$1" )
-                param+=( "$1" )
-                shift 1
+            param=( ${param[@]} "$1" )
+            shift 1
             fi
             ;;
     esac
 done
 
-
-if [ -z $param ]; then
+if [[ -z "${param[0]}" ]]; then
     echo "$PROGNAME: too few arguments" 1>&2
     echo "Try '$PROGNAME --help' for more information." 1>&2
     exit 1
 fi
 
-if [ "$PROVIDER" = "kind" ]; then
-    if [ ! -d ${dir}/kind/$param ]; then
-        echo "[ERROR] Unsupported kubernetes version is specified."
-        exit 1
-    fi
-    kustomize build ${dir}/kind/$param | yq delete - metadata | kind create cluster --config -
-else
-    echo "PROVIDER error"
-    exit 1
+CMD=${param[0]}
+
+if [ $DEBUG ] ; then
+    echo "[DEBUG] Following parameters are specified."
+    echo "  - CMD: $CMD"
 fi
 
+i=0
+for e in ${param[@]}; do
+    eval PARAM${i}=${e}
+    if [ $DEBUG ] && [ $i -ne 0 ]; then
+        echo "  - PARAM${i}: ${e}"
+    fi
+    let i++
+done
+
+unset PARAM0
+
+case "$CMD" in
+
+    'deploy' )
+
+        if [[ -z "${PARAM1}" ]]; then
+            echo "$PROGNAME deploy: too few arguments" 1>&2
+            echo "Try '$PROGNAME --help' for more information." 1>&2
+            exit 1
+        fi
+        if [ "$PROVIDER" = "kind" ]; then
+            if [ ! -d ${dir}/kind/$PARAM1 ]; then
+                echo "[ERROR] Unsupported kubernetes version is specified."
+                exit 1
+            fi
+            kustomize build ${dir}/kind/$PARAM1 | yq delete - metadata | kind create cluster --config - --name ${KIND_CLUSTER_NAME}
+        else
+            echo "PROVIDER error"
+            exit 1
+        fi
+        ;;
+    'configure' )
+        if [ "$PROVIDER" = "kind" ]; then
+            kubectl cluster-info --context kind-${KIND_CLUSTER_NAME}
+        else
+            echo "PROVIDER error"
+            exit 1
+        fi
+        ;;
+    'delete' )
+        if [ "$PROVIDER" = "kind" ]; then
+            kind delete cluster --name ${KIND_CLUSTER_NAME}
+        else
+            echo "PROVIDER error"
+            exit 1
+        fi
+        ;;
+    *)
+        echo "command error"
+        exit 1
+        ;;
+esac
