@@ -34,7 +34,9 @@ jobs:
         wget https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv3.5.4/kustomize_v3.5.4_linux_amd64.tar.gz
         tar xvzf kustomize_v3.5.4_linux_amd64.tar.gz
         mv kustomize ~/bin/
-        export PATH=${PATH}:~/bin
+        export PATH=${PATH}:/home/runner/bin
+        echo "check env"
+        env
         echo "check ~/bin"
         ls ~/bin
         echo "which yq"
