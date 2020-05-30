@@ -37,6 +37,9 @@ do
             echo $VERSION
             exit 1
             ;;
+        '-v'|'--verbose' )
+            DEBUG=true
+            ;;
         '-p'|'--provider' )
             if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
                 echo "$PROGNAME: option requires an argument -- $1" 1>&2
@@ -65,7 +68,7 @@ done
 
 echo "param: ${param[0]} ${param[1]}"
 
-if [[ -z "${param[0]}" ]] || [[ -z "${param[1]}" ]] ; then
+if [[ -z "${param[0]}" ]]; then
     echo "$PROGNAME: too few arguments" 1>&2
     echo "Try '$PROGNAME --help' for more information." 1>&2
     exit 1
@@ -74,13 +77,20 @@ fi
 CMD=${param[0]}
 PARAM=${param[1]}
 
-echo "CMD: $CMD"
-echo "PARAM: $PARAM"
+if [ $DEBUG ] ; then
+    echo "CMD: $CMD"
+    echo "PARAM: $PARAM"
+fi
 
 case "$CMD" in
 
     'deploy' )
 
+        if [[ -z "${PARAM}" ]]; then
+            echo "$PROGNAME deploy: too few arguments" 1>&2
+            echo "Try '$PROGNAME --help' for more information." 1>&2
+            exit 1
+        fi
         if [ "$PROVIDER" = "kind" ]; then
             if [ ! -d ${dir}/kind/$PARAM ]; then
                 echo "[ERROR] Unsupported kubernetes version is specified."
@@ -91,6 +101,12 @@ case "$CMD" in
             echo "PROVIDER error"
             exit 1
         fi
+        ;;
+    'configure' )
+        kubectl cluster-info --context kind-kind
+        ;;
+    'delete' )
+        kind delete cluster
         ;;
     *)
         echo "command error"
