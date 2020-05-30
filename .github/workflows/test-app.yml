@@ -76,6 +76,20 @@ jobs:
         export PATH=${PATH}:/home/runner/bin
         ./kubetest configure
 
+    - name: test kubectl
+      run: |
+        export PATH=${PATH}:/home/runner/bin
+        while [ `kubectl get node | grep -v NAME | grep -c NotReady` -ne 0 ]; do sleep 5; done
+        kubectl get node -o wide
+
+    - name: test deploy
+      run: |
+        export PATH=${PATH}:/home/runner/bin
+        kubectl apply -f ./sample/ -R
+        sleep 5
+        while [ `kubectl get pod | grep -c 0/1` -ne 0 ] && [ `kubectl get pod | grep -c Failed` -eq 0 ]; do sleep 5; done
+        kubectl get pod -o wide
+
     - name: test kubetest delete
       run: |
         export PATH=${PATH}:/home/runner/bin
