@@ -42,7 +42,7 @@ jobs:
         echo "which kind"
         which kind
 
-    - name: sho environtment
+    - name: show environtment
       run: |
         echo "git branch:"
         git branch

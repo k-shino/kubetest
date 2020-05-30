@@ -33,7 +33,7 @@ usage() {
     echo "  -h, --help"
     echo "      --version"
     echo ""
-    exit 1
+    exit 0
 }
 
 for OPT in "$@"
@@ -41,7 +41,6 @@ do
     case "$OPT" in
         '-h'|'--help' )
             usage
-            exit 0
             ;;
         '--version' )
             echo $VERSION
