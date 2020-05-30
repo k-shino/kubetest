@@ -49,6 +49,7 @@ jobs:
 
     - name: show environtment
       run: |
+        export PATH=${PATH}:/home/runner/bin
         echo "git branch:"
         git branch
         echo "current directory:"
@@ -61,18 +62,22 @@ jobs:
     # Runs a set of commands using the runners shell
     - name: test kubetest -h
       run: |
+        export PATH=${PATH}:/home/runner/bin
         ./kubetest -h
 
     - name: test kubetest deploy v1.15
       run: |
+        export PATH=${PATH}:/home/runner/bin
         ./kubetest deploy v1.15
         sleep 10
 
     - name: test kubetest configure
       run: |
+        export PATH=${PATH}:/home/runner/bin
         ./kubetest configure
 
     - name: test kubetest delete
       run: |
+        export PATH=${PATH}:/home/runner/bin
         ./kubetest delete
 
