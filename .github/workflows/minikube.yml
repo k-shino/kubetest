@@ -55,11 +55,10 @@ jobs:
         export PATH=${PATH}:/home/runner/bin
         ./kubetest -h ${{ matrix.option }} -p minikube
 
-    - name: test kubetest deploy ${{ matrix.kubernetes }} vir ${{ matrix.minikube_driver }}
+    - name: test kubetest deploy ${{ matrix.kubernetes }} via ${{ matrix.minikube_driver }}
       run: |
         export PATH=${PATH}:/home/runner/bin
-        export MINIKUBE_DRIVER=${{ matrix.minikube_driver }}
-        ./kubetest deploy ${{ matrix.kubernetes }} ${{ matrix.option }} -p minikube
+        ./kubetest deploy ${{ matrix.kubernetes }} ${{ matrix.option }} -p minikube --minikube-driver ${{ matrix.minikube_driver }}
         sleep 10
 
     - name: test kubetest configure
@@ -123,11 +122,10 @@ jobs:
         export PATH=${PATH}:/home/runner/bin
         ./kubetest -h ${{ matrix.option }} -p minikube
 
-    - name: test kubetest deploy ${{ matrix.kubernetes }} vir ${{ matrix.minikube_driver }}
+    - name: test kubetest deploy ${{ matrix.kubernetes }} via ${{ matrix.minikube_driver }}
       run: |
         export PATH=${PATH}:/home/runner/bin
-        export MINIKUBE_DRIVER=${{ matrix.minikube_driver }}
-        ./kubetest deploy ${{ matrix.kubernetes }} ${{ matrix.option }} -p minikube
+        ./kubetest deploy ${{ matrix.kubernetes }} ${{ matrix.option }} -p minikube --minikube-driver ${{ matrix.minikube_driver }}
         sleep 10
 
     - name: test kubetest configure
