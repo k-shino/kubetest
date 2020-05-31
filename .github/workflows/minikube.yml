@@ -13,8 +13,8 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  minikube:
-    name: minikube test
+  minikube_linux:
+    name: minikube linux test
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     strategy:
@@ -34,6 +34,72 @@ jobs:
         export PATH=${PATH}:/home/runner/bin
         echo "check ~/bin"
         ls ~/bin
+        echo "which minikube"
+        which minikube
+
+    - name: show environtment
+      run: |
+        export PATH=${PATH}:/home/runner/bin
+        echo "git branch:"
+        git branch
+        echo "current directory:"
+        pwd
+        echo "show files in current directory"
+        ls
+        echo "env:"
+        env
+
+    - name: test kubetest -h
+      run: |
+        export PATH=${PATH}:/home/runner/bin
+        ./kubetest -h ${{ matrix.option }} -p minikube
+
+    - name: test kubetest deploy ${{ matrix.kubernetes }}
+      run: |
+        export PATH=${PATH}:/home/runner/bin
+        ./kubetest deploy ${{ matrix.kubernetes }} ${{ matrix.option }} -p minikube
+        sleep 10
+
+    - name: test kubetest configure
+      run: |
+        export PATH=${PATH}:/home/runner/bin
+        ./kubetest configure ${{ matrix.option }} -p minikube
+
+    - name: test kubectl
+      run: |
+        export PATH=${PATH}:/home/runner/bin
+        while [ `kubectl get node | grep -v NAME | grep -c NotReady` -ne 0 ]; do sleep 5; done
+        kubectl get node -o wide
+
+    - name: test deploy
+      run: |
+        export PATH=${PATH}:/home/runner/bin
+        kubectl apply -f ./sample/ -R
+        sleep 5
+        while [ `kubectl get pod | grep -c 0/1` -ne 0 ] && [ `kubectl get pod | grep -c Failed` -eq 0 ]; do sleep 5; done
+        kubectl get pod -o wide
+
+    - name: test kubetest delete
+      run: |
+        export PATH=${PATH}:/home/runner/bin
+        ./kubetest delete ${{ matrix.option }} -p minikube
+
+  minikube_mac:
+    name: minikube linux test
+    # The type of runner that the job will run on
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        option: [' ']
+        kubernetes: [v1.18.0]
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - name: set up environment
+      run: |
+        brew install minikube
         echo "which minikube"
         which minikube
 
