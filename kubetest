@@ -126,7 +126,11 @@ case "$CMD" in
         ;;
     'configure' )
         if [ "$PROVIDER" = "kind" ]; then
-            kubectl cluster-info --context kind-${KIND_CLUSTER_NAME}
+            kubectl config use-context kind-${KIND_CLUSTER_NAME}
+            kubectl cluster-info
+        elif [ "$PROVIDER" = "minikube" ]; then
+            kubectl config use-context minikube
+            kubectl cluster-info
         else
             echo "PROVIDER error"
             exit 1
