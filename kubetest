@@ -9,6 +9,8 @@ PROVIDER=kind
 #############################
 KIND_CLUSTER_NAME=${KIND_CLUSTER_NAME:-kubetest}
 #############################
+MINIKUBE_DRIVER=${MINIKUBE_DRIVER:-virtualbox}
+#############################
 
 dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
 
@@ -116,7 +118,7 @@ case "$CMD" in
             fi
             kustomize build ${dir}/kind/$PARAM1 | yq delete - metadata | kind create cluster --config - --name ${KIND_CLUSTER_NAME}
         elif [ "$PROVIDER" = "minikube" ]; then
-            minikube start --driver hyperkit --kubernetes-version ${PARAM1} -n 3
+            minikube start --driver ${MINIKUBE_DRIVER} --kubernetes-version ${PARAM1} -n 3
         else
             echo "PROVIDER error"
             exit 1
