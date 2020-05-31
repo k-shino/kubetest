@@ -123,7 +123,7 @@ jobs:
     - name: test kubetest deploy ${{ matrix.kubernetes }}
       run: |
         export PATH=${PATH}:/home/runner/bin
-        export MINIKUBE_DRIVER=hyperkit
+        export MINIKUBE_DRIVER=virtualbox
         ./kubetest deploy ${{ matrix.kubernetes }} ${{ matrix.option }} -p minikube
         sleep 10
 
