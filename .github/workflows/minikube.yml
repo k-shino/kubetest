@@ -85,7 +85,7 @@ jobs:
         ./kubetest delete ${{ matrix.option }} -p minikube
 
   minikube_mac:
-    name: minikube linux test
+    name: minikube mac test
     # The type of runner that the job will run on
     runs-on: macos-latest
     strategy:
@@ -123,6 +123,7 @@ jobs:
     - name: test kubetest deploy ${{ matrix.kubernetes }}
       run: |
         export PATH=${PATH}:/home/runner/bin
+        export MINIKUBE_DRIVER=hyperkit
         ./kubetest deploy ${{ matrix.kubernetes }} ${{ matrix.option }} -p minikube
         sleep 10
 
