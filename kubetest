@@ -115,6 +115,8 @@ case "$CMD" in
                 exit 1
             fi
             kustomize build ${dir}/kind/$PARAM1 | yq delete - metadata | kind create cluster --config - --name ${KIND_CLUSTER_NAME}
+        elif [ "$PROVIDER" = "minikube" ]; then
+            minikube start --driver hyperkit --kubernetes-version ${PARAM1} -n 3
         else
             echo "PROVIDER error"
             exit 1
@@ -131,6 +133,8 @@ case "$CMD" in
     'delete' )
         if [ "$PROVIDER" = "kind" ]; then
             kind delete cluster --name ${KIND_CLUSTER_NAME}
+        elif [ "$PROVIDER" = "minikube" ]; then
+            minikube delete
         else
             echo "PROVIDER error"
             exit 1

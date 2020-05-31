@@ -4,9 +4,13 @@ Deployment tool for various versions of kubernetes environment
 
 ## Requirements
 
-- [kind version v0.8.1](https://github.com/kubernetes-sigs/kind/releases/tag/v0.8.1)
-- [yq version 3.2.1](https://github.com/mikefarah/yq/releases/tag/3.2.1)
-- [kustomize version v3.5.4](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv3.5.4)
+- kind (default provider)
+  - docker
+  - [kind version v0.8.1](https://github.com/kubernetes-sigs/kind/releases/tag/v0.8.1)
+  - [yq version 3.2.1](https://github.com/mikefarah/yq/releases/tag/3.2.1)
+  - [kustomize version v3.5.4](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv3.5.4)
+- minikube
+  - [v1.11.0](https://kubernetes.io/docs/tasks/tools/install-minikube/)
 
 ## How to use
 
@@ -14,15 +18,20 @@ Deployment tool for various versions of kubernetes environment
 kubetest deploy <kubernetes-version>
 ```
 
-supported kubernetes version: (which depends on kind v0.8.0 release)
-- v1.18.2
-- v1.17
-- v1.16
-- v1.15
-- v1.14
-- v1.13
-- v1.12
-- v1.11
+Supported kubernetes version:
+
+- kind provier:
+    - v1.18.2
+    - v1.17
+    - v1.16
+    - v1.15
+    - v1.14
+    - v1.13
+    - v1.12
+    - v1.11
+
+- minikube provier
+
 
 example:
 
