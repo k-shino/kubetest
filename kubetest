@@ -9,7 +9,7 @@ PROVIDER=kind
 #############################
 KIND_CLUSTER_NAME=${KIND_CLUSTER_NAME:-kubetest}
 #############################
-MINIKUBE_DRIVER=${MINIKUBE_DRIVER:-virtualbox}
+MINIKUBE_DRIVER=${MINIKUBE_DRIVER:-docker}
 #############################
 
 dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
