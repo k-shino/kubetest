@@ -21,6 +21,7 @@ jobs:
       matrix:
         option: [' ']
         kubernetes: [v1.18.0]
+        minikube_driver: [docker]
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -54,9 +55,10 @@ jobs:
         export PATH=${PATH}:/home/runner/bin
         ./kubetest -h ${{ matrix.option }} -p minikube
 
-    - name: test kubetest deploy ${{ matrix.kubernetes }}
+    - name: test kubetest deploy ${{ matrix.kubernetes }} vir ${{ matrix.minikube_driver }}
       run: |
         export PATH=${PATH}:/home/runner/bin
+        export MINIKUBE_DRIVER=${{ matrix.minikube_driver }}
         ./kubetest deploy ${{ matrix.kubernetes }} ${{ matrix.option }} -p minikube
         sleep 10
 
@@ -92,6 +94,7 @@ jobs:
       matrix:
         option: [' ']
         kubernetes: [v1.18.0]
+        minikube_driver: [virtualbox]
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -120,10 +123,10 @@ jobs:
         export PATH=${PATH}:/home/runner/bin
         ./kubetest -h ${{ matrix.option }} -p minikube
 
-    - name: test kubetest deploy ${{ matrix.kubernetes }}
+    - name: test kubetest deploy ${{ matrix.kubernetes }} vir ${{ matrix.minikube_driver }}
       run: |
         export PATH=${PATH}:/home/runner/bin
-        export MINIKUBE_DRIVER=virtualbox
+        export MINIKUBE_DRIVER=${{ matrix.minikube_driver }}
         ./kubetest deploy ${{ matrix.kubernetes }} ${{ matrix.option }} -p minikube
         sleep 10
 

@@ -9,7 +9,7 @@ PROVIDER=kind
 #############################
 KIND_CLUSTER_NAME=${KIND_CLUSTER_NAME:-kubetest}
 #############################
-MINIKUBE_DRIVER=${MINIKUBE_DRIVER:-docker}
+minikube_driver=${MINIKUBE_DRIVER:-docker}
 #############################
 
 dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
@@ -60,6 +60,14 @@ do
             PROVIDER="$2"
             shift 2
             ;;
+        --minikube-* )
+            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "$PROGNAME: option requires an argument -- $1" 1>&2
+                exit 1
+            fi
+            eval "export minikube_`echo $1 | sed -e 's/--minikube-//'`=$2"
+            shift 2
+            ;;
         '--'|'-' )
             shift 1
             param+=( "$@" )
@@ -100,6 +108,11 @@ for e in ${param[@]}; do
     let i++
 done
 
+if [ $DEBUG ] ; then
+    echo "[DEBUG] minikube parameter:"
+    env | grep minikube_
+fi
+
 unset PARAM0
 
 case "$CMD" in
@@ -118,7 +131,7 @@ case "$CMD" in
             fi
             kustomize build ${dir}/kind/$PARAM1 | yq delete - metadata | kind create cluster --config - --name ${KIND_CLUSTER_NAME}
         elif [ "$PROVIDER" = "minikube" ]; then
-            minikube start --driver ${MINIKUBE_DRIVER} --kubernetes-version ${PARAM1} -n 3
+            minikube start --driver ${minikube_driver} --kubernetes-version ${PARAM1} -n 3
         else
             echo "PROVIDER error"
             exit 1
